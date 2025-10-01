@@ -1,0 +1,8 @@
+[
+  { "id": 1, "nombre": "PRODUCTO 01",  "categoria": "Periférico", "precio": 599,  "stock": true  },
+  { "id": 2, "nombre": "LIBRO",    "categoria": "Periférico", "precio": 399,  "stock": false },
+  { "id": 3, "nombre": "CUADERNO",  "categoria": "Pantalla",   "precio": 3899, "stock": true  },
+  { "id": 4, "nombre": "USB 64GB", "categoria": "Almacenaje", "precio": 249,  "stock": true  },
+  { "id": 5, "nombre": "Laptop",   "categoria": "Equipo",     "precio": 14999,"stock": false },
+  { "id": 6, "nombre": "Audífonos","categoria": "Audio",      "precio": 899,  "stock": true  }
+]
