@@ -1,50 +1,39 @@
-<!doctype html>
-<html lang="es">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cargar JSON → Tabla</title>
-  <link rel="stylesheet" href="./styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif; margin: 2rem;
+        }
+        #out{
+            white-space: pre-wrap; border: 1px solid #f3a0a0; padding: 1rem; border-radius: .5rem;
+        }
+        pre{
+            color:black;
+        }
+    </style>
 </head>
-
 <body>
-  <main class="wrap">
-    <h1>Cargar JSON y visualizar en tabla</h1>
-    <p class="lead">
-      Opción A: selecciona un <strong>archivo JSON</strong> local.<br>
-      Opción B: usa el botón “Cargar ejemplo” (requiere abrir con servidor).
-    </p>
-
-    <section class="controls" aria-label="Controles de carga">
-      <label for="file" class="btn">
-        <input id="file" type="file" accept="application/json,.json" hidden>
-        Seleccionar archivo JSON
-      </label>
-      <button id="btn-ejemplo" type="button" class="btn ghost">Cargar ejemplo</button>
-      <button id="btn-limpiar" type="button" class="btn light">Limpiar</button>
-    </section>
-
-    <p id="status" class="status" role="status" aria-live="polite">Sin datos cargados.</p>
-
-    <div class="table-wrap" id="table-wrap" hidden>
-      <table>
-        <caption>Datos del JSON</caption>
-        <thead id="thead"></thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-
-    <details class="help">
-      <summary>Formato esperado</summary>
-      <pre><code>[
-  { "id": 1, "nombre": "Teclado", "categoria": "Periférico", "precio": 599, "stock": true },
-  { "id": 2, "nombre": "Mouse",   "categoria": "Periférico", "precio": 399, "stock": false }
-]</code></pre>
-      <p>Debe ser un <strong>arreglo de objetos</strong> con las mismas llaves por fila.</p>
-    </details>
-  </main>
-  <script href="javascrpit.js"></script>
+    <h1>Cargar el archivo de texto</h1>
+    <input id="file" type="file" accept=".txt, text/plain, .json">
+    <button id="show" type="button">Mostrar</button>
+ 
+    <h2>Contenido</h2>
+    <pre id="out">-aún no hay contenido-</pre>
+ 
+    <script>
+        const input = document.getElementById('file');
+        const out = document.getElementById('out');
+ 
+        document.getElementById('show').addEventListener('click', async () =>{
+            const f = input.files?.[0];
+            if (!f) { out.textContent = 'Primero elige un archivo .txt'; return;}
+            const text = await f.text();
+            out.textContent = text;
+        });
+    </script>
 </body>
-
 </html>
