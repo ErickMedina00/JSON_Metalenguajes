@@ -1,37 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=1, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body {
-            font-family: system-ui, sans-serif; margin: 2rem;
-            background-color: bisque;
-        }
-        #out{
-            white-space: pre-wrap; border: 1px solid #f3a0a0; padding: 1rem; border-radius: .5rem;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostrar archivo JSON en columnas</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 2rem;
+      background-color: bisque;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: white;
+      border-radius: .5rem;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: green;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    
+  </style>
 </head>
 <body>
-    <h1>Cargar el archivo de texto</h1>
-    <input id="file" type="file" accept=".txt, text/plain, .json">
-    <button id="show" type="button">Mostrar</button>
- 
-    <h2>Contenido</h2>
-    <pre id="out">-aún no hay contenido-</pre>
- 
-    <script>
-        const input = document.getElementById('file');
-        const out = document.getElementById('out');
- 
-        document.getElementById('show').addEventListener('click', async () =>{
-            const f = input.files?.[0];
-            if (!f) { out.textContent = 'Primero elige un archivo .txt'; return;}
-            const text = await f.text();
-            out.textContent = text;
+  <h1>Cargar y mostrar archivo JSON</h1>
+  
+  <input id="file" type="file" accept=".json">
+  <button id="show" type="button">Mostrar</button>
+
+  <div id="output"></div>
+
+  <script>
+    const input = document.getElementById('file');
+    const output = document.getElementById('output');
+
+    document.getElementById('show').addEventListener('click', async () => {
+      const file = input.files?.[0];
+      if (!file) {
+        output.innerHTML = '<p> Primero selecciona un archivo JSON.</p>';
+        return;
+      }
+
+      try {
+        // Leer el archivo como texto
+        const text = await file.text();
+
+        // Convertir el texto a objeto JSON
+        const jsonData = JSON.parse(text);
+
+        // Crear tabla HTML
+        let tabla = `
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio ($)</th>
+                <th>Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        // Rellenar las filas con los datos
+        jsonData.forEach(persona => {
+          tabla += `
+            <tr>
+              <td>${persona.id}</td>
+              <td>${persona.nombre}</td>
+              <td>${persona.categoria}</td>
+              <td>${persona.precio}</td>
+              <td>${persona.stock}</td>
+            </tr>
+          `;
         });
-    </script>
+
+        tabla += `</tbody></table>`;
+        output.innerHTML = tabla;
+      } catch (err) {
+        output.innerHTML = `<p>Error al leer el archivo JSON: ${err.message}</p>`;
+      }
+    });
+  </script>
 </body>
 </html>
