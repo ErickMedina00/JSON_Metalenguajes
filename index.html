@@ -45,57 +45,91 @@
   <div id="output"></div>
 
   <script>
-    const input = document.getElementById('file');
-    const output = document.getElementById('output');
+const input = document.getElementById('file');
+const output = document.getElementById('output');
 
-    document.getElementById('show').addEventListener('click', async () => {
-      const file = input.files?.[0];
-      if (!file) {
-        output.innerHTML = '<p> Primero selecciona un archivo JSON.</p>';
+document.getElementById('show').addEventListener('click', async () => {
+    const file = input.files?.[0];
+    if (!file) {
+        output.innerHTML = '<p>Primero selecciona un archivo JSON.</p>';
         return;
-      }
+    }
 
-      try {
+    try {
         // Leer el archivo como texto
         const text = await file.text();
 
         // Convertir el texto a objeto JSON
         const jsonData = JSON.parse(text);
 
+        // Verificar si es un array y no está vacío
+        if (!Array.isArray(jsonData) || jsonData.length === 0) {
+            output.innerHTML = '<p>El JSON debe ser un array de objetos no vacío.</p>';
+            return;
+        }
+
+        // Obtener todas las columnas únicas de todos los objetos
+        const todasLasColumnas = new Set();
+        
+        jsonData.forEach(objeto => {
+            Object.keys(objeto).forEach(key => {
+                todasLasColumnas.add(key);
+            });
+        });
+
+        const columnas = Array.from(todasLasColumnas);
+
         // Crear tabla HTML
         let tabla = `
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Precio ($)</th>
-                <th>Stock</th>
-              </tr>
-            </thead>
-            <tbody>
+            <table border="1" style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
         `;
 
-        // Rellenar las filas con los datos
-        jsonData.forEach(persona => {
-          tabla += `
-            <tr>
-              <td>${persona.id}</td>
-              <td>${persona.nombre}</td>
-              <td>${persona.categoria}</td>
-              <td>${persona.precio}</td>
-              <td>${persona.stock}</td>
-            </tr>
-          `;
+        // Crear encabezados dinámicamente
+        columnas.forEach(columna => {
+            tabla += `<th style="padding: 8px; text-align: left;">${columna}</th>`;
+        });
+
+        tabla += `
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        // Rellenar las filas con los datos dinámicamente
+        jsonData.forEach(objeto => {
+            tabla += `<tr>`;
+            
+            columnas.forEach(columna => {
+                const valor = objeto[columna];
+                // Manejar valores undefined, null o objetos
+                let valorMostrar = '';
+                
+                if (valor === undefined || valor === null) {
+                    valorMostrar = '';
+                } else if (typeof valor === 'object') {
+                    valorMostrar = JSON.stringify(valor);
+                } else {
+                    valorMostrar = valor;
+                }
+                
+                tabla += `<td style="padding: 8px;">${valorMostrar}</td>`;
+            });
+            
+            tabla += `</tr>`;
         });
 
         tabla += `</tbody></table>`;
-        output.innerHTML = tabla;
-      } catch (err) {
+        
+        // Agregar información sobre la tabla generada
+        const info = `<p><strong>Tabla generada:</strong> ${jsonData.length} filas × ${columnas.length} columnas</p>`;
+        output.innerHTML = info + tabla;
+
+    } catch (err) {
         output.innerHTML = `<p>Error al leer el archivo JSON: ${err.message}</p>`;
-      }
-    });
+    }
+});
   </script>
 </body>
 </html>
